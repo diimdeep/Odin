@@ -91,12 +91,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download LLVM and setup PATH
+        env:
+          CFLAGS: "-mmacosx-version-min=11.0"
+          CXXFLAGS: "-mmacosx-version-min=11.0"
+          LDFLAGS: "-mmacosx-version-min=11.0"
+          MACOSX_DEPLOYMENT_TARGET: 11.0
         run: |
-          brew install llvm@18 dylibbundler
+          brew install --build-from-source z3 llvm@18 dylibbundler
           echo "/usr/local/opt/llvm@18/bin" >> $GITHUB_PATH
       - name: build odin
         # These -L makes the linker prioritize system libraries over LLVM libraries, this is mainly to
         # not link with libunwind bundled with LLVM but link with libunwind on the system.
+        env:
+          CFLAGS: "-mmacosx-version-min=11.0"
+          CXXFLAGS: "-mmacosx-version-min=11.0"
+          LDFLAGS: "-mmacosx-version-min=11.0"
+          MACOSX_DEPLOYMENT_TARGET: 11.0
         run: CXXFLAGS="-L/usr/lib/system -L/usr/lib" make nightly
       - name: Bundle
         run: |
